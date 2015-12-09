@@ -23,11 +23,16 @@ npm install react-native-search-bar@latest --save
 
 ```JSX
 <SearchBar
+	ref='searchBar'
 	placeholder='Search'
 	onChangeText={...}
 	onSearchButtonPress={...}
 	onCancelButtonPress={...}
 	/>
+```
+
+```javascript
+this.refs.searchBar.focus();
 ```
 
 For all supportted properties, please check out `propTypes` in either [SearchBar.coffee](SearchBar.coffee) or [SearchBar.js](SearchBar.js).
@@ -37,7 +42,7 @@ There is also an example project in the [SearchBarExample](SearchBarExample) dir
 ## Contribution
 
 For now, implemented are only some of the features of [UISearchBar](https://developer.apple.com/library/ios/documentation/UIKit/Reference/UISearchBar_Class/).
-Feel free to send a pull request. To get started, you can read the ["Native UI Components (iOS)"](http://facebook.github.io/react-native/docs/nativecomponentsios.html) guide on React Native website.
+Feel free to send a pull request. To get started, you can read the ["Native UI Components (iOS)"](http://facebook.github.io/react-native/docs/native-components-ios.html) guide on React Native website.
 
 ## License
 
