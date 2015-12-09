@@ -4,6 +4,7 @@
 
 #import "RCTBridge.h"
 #import "RCTUIManager.h"
+#import "RCTSparseArray.h"
 
 @implementation RNSearchBarManager
 
@@ -68,7 +69,7 @@ RCT_CUSTOM_VIEW_PROPERTY(textFieldBackgroundColor, UIColor, RNSearchBar)
 RCT_EXPORT_METHOD(blur:(nonnull NSNumber *)reactTag)
 {
     [self.bridge.uiManager addUIBlock:
-     ^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry){
+     ^(__unused RCTUIManager *uiManager, RCTSparseArray *viewRegistry){
          RNSearchBar *searchBar = viewRegistry[reactTag];
 
          if ([searchBar isKindOfClass:[RNSearchBar class]]) {
@@ -82,7 +83,7 @@ RCT_EXPORT_METHOD(blur:(nonnull NSNumber *)reactTag)
 RCT_EXPORT_METHOD(focus:(nonnull NSNumber *)reactTag)
 {
     [self.bridge.uiManager addUIBlock:
-     ^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry){
+     ^(__unused RCTUIManager *uiManager, RCTSparseArray *viewRegistry){
          RNSearchBar *searchBar = viewRegistry[reactTag];
 
          if ([searchBar isKindOfClass:[RNSearchBar class]]) {
