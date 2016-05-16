@@ -41,7 +41,7 @@ RCT_CUSTOM_VIEW_PROPERTY(textFieldBackgroundColor, UIColor, RNSearchBar)
 {
   if ([RCTConvert UIColor:json]) {
     // logic borrowed from http://stackoverflow.com/a/22266150/395989
-    CGSize size = CGSizeMake(34, 34);
+    CGSize size = CGSizeMake(34, 30);
     // create context with transparent background
     UIGraphicsBeginImageContextWithOptions(size, NO, 1);
 
