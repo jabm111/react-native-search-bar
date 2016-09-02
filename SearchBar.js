@@ -1,12 +1,14 @@
-var NativeModules, PropTypes, RNSearchBar, React, SearchBar;
+var NativeModules, PropTypes, RNSearchBar, React, ReactNative, SearchBar;
 
-React = require('react-native');
+React = require('react');
 
-RNSearchBar = React.requireNativeComponent('RNSearchBar', null);
+ReactNative = require('react-native');
+
+RNSearchBar = ReactNative.requireNativeComponent('RNSearchBar', null);
 
 PropTypes = React.PropTypes;
 
-NativeModules = React.NativeModules;
+NativeModules = ReactNative.NativeModules;
 
 SearchBar = React.createClass({
   propTypes: {
@@ -14,6 +16,7 @@ SearchBar = React.createClass({
     text: PropTypes.string,
     barTintColor: PropTypes.string,
     tintColor: PropTypes.string,
+    textColor: PropTypes.string,
     textFieldBackgroundColor: PropTypes.string,
     showsCancelButton: PropTypes.bool,
     onChange: PropTypes.func,
@@ -22,7 +25,18 @@ SearchBar = React.createClass({
     onBlur: PropTypes.func,
     onSearchButtonPress: PropTypes.func,
     onCancelButtonPress: PropTypes.func,
-    hideBackground: PropTypes.bool
+    enablesReturnKeyAutomatically: PropTypes.bool,
+    hideBackground: PropTypes.bool,
+    barStyle: PropTypes.oneOf(['default', 'black']),
+    searchBarStyle: PropTypes.oneOf(['default', 'prominent', 'minimal']),
+    editable: PropTypes.bool
+  },
+  getDefaultProps: function() {
+    return {
+      barStyle: 'default',
+      searchBarStyle: 'default',
+      editable: true
+    };
   },
   _onChange: function(e) {
     var base, base1;
@@ -40,11 +54,14 @@ SearchBar = React.createClass({
       return typeof (base1 = this.props).onCancelButtonPress === "function" ? base1.onCancelButtonPress() : void 0;
     }
   },
-  blur: function(){
-    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this));
+  blur: function() {
+    return NativeModules.RNSearchBarManager.blur(ReactNative.findNodeHandle(this));
   },
-  focus: function(){
-    NativeModules.RNSearchBarManager.focus(React.findNodeHandle(this));
+  focus: function() {
+    return NativeModules.RNSearchBarManager.focus(ReactNative.findNodeHandle(this));
+  },
+  unFocus: function() {
+    return NativeModules.RNSearchBarManager.unFocus(ReactNative.findNodeHandle(this));
   },
   render: function() {
     return <RNSearchBar

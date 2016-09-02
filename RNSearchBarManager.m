@@ -5,6 +5,23 @@
 #import "RCTBridge.h"
 #import "RCTUIManager.h"
 
+@implementation RCTConvert (UIBarStyle)
+RCT_ENUM_CONVERTER(UIBarStyle, (@{
+                                  @"default": @(UIBarStyleDefault),
+                                  @"black": @(UIBarStyleBlack)
+                                  }),
+                   UIBarStyleDefault, integerValue)
+@end
+
+@implementation RCTConvert (UISearchBarStyle)
+RCT_ENUM_CONVERTER(UISearchBarStyle, (@{
+                                        @"default": @(UISearchBarStyleDefault),
+                                        @"prominent": @(UISearchBarStyleProminent),
+                                        @"minimal": @(UISearchBarStyleMinimal)
+                                        }),
+                   UISearchBarStyleDefault, integerValue)
+@end
+
 @implementation RNSearchBarManager
 
 RCT_EXPORT_MODULE()
@@ -21,19 +38,24 @@ RCT_EXPORT_MODULE()
 {
     RNSearchBar *searchBar = [[RNSearchBar alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
     searchBar.searchTextPositionAdjustment = UIOffsetMake(5, 0);
-    
+
     return searchBar;
 }
 
 UIColor *placeholderColor;
 
 RCT_EXPORT_VIEW_PROPERTY(text, NSString)
-RCT_EXPORT_VIEW_PROPERTY(showsCancelButton, BOOL)
+RCT_CUSTOM_VIEW_PROPERTY(showsCancelButton, BOOL, RNSearchBar)
+{
+    BOOL value = [RCTConvert BOOL:json];
+    view._jsShowsCancelButton = value;
+    view.showsCancelButton = value;
+}
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_CUSTOM_VIEW_PROPERTY(placeholder, NSString, RNSearchBar)
 {
     UITextField *searchField = [view valueForKey:@"_searchField"];
-    
+
     if (placeholderColor == nil) {
         placeholderColor = [UIColor lightGrayColor];
     }
@@ -52,11 +74,25 @@ RCT_CUSTOM_VIEW_PROPERTY(tintColor, UIColor, RNSearchBar)
     searchField.textColor = [RCTConvert UIColor:json];
 }
 
+RCT_EXPORT_VIEW_PROPERTY(enablesReturnKeyAutomatically, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(barStyle, UIBarStyle)
+RCT_EXPORT_VIEW_PROPERTY(searchBarStyle, UISearchBarStyle)
 RCT_CUSTOM_VIEW_PROPERTY(hideBackground, BOOL, RNSearchBar)
 {
     if ([RCTConvert BOOL:json]) {
         view.backgroundImage = [[UIImage alloc] init];
         view.backgroundColor = [UIColor clearColor];
+    }
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(editable, BOOL, RNSearchBar)
+{
+    if ([RCTConvert BOOL:json]) {
+        [view setUserInteractionEnabled: YES];
+        view.alpha = 1;
+    } else {
+        [view setUserInteractionEnabled: NO];
+        view.alpha = .75;
     }
 }
 
@@ -80,6 +116,14 @@ RCT_CUSTOM_VIEW_PROPERTY(textFieldBackgroundColor, UIColor, RNSearchBar)
     [view setSearchFieldBackgroundImage:image forState:UIControlStateNormal];
     [view setSearchTextPositionAdjustment:UIOffsetMake(8.0, 0.0)];
   }
+}
+
+//based on http://stackoverflow.com/questions/19048766/
+RCT_CUSTOM_VIEW_PROPERTY(textColor, UIColor, RNSearchBar)
+{
+    if([RCTConvert UIColor:json]) {
+       [[UITextField appearanceWhenContainedIn:[RNSearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:[RCTConvert UIColor:json]}];
+    }
 }
 
 - (NSDictionary *)constantsToExport
@@ -117,5 +161,18 @@ RCT_EXPORT_METHOD(focus:(nonnull NSNumber *)reactTag)
      }];
 }
 
+RCT_EXPORT_METHOD(unFocus:(nonnull NSNumber *)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:
+   ^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry){
+     RNSearchBar *searchBar = viewRegistry[reactTag];
+
+     if ([searchBar isKindOfClass:[RNSearchBar class]]) {
+       [searchBar resignFirstResponder];
+     } else {
+       RCTLogError(@"Cannot unFocus: %@ (tag #%@) is not RNSearchBar", searchBar, reactTag);
+     }
+   }];
+}
 
 @end

@@ -1,10 +1,11 @@
-React = require 'react-native'
+React = require 'react'
+ReactNative = require 'react-native'
 
-RNSearchBar = React.requireNativeComponent 'RNSearchBar', null
+RNSearchBar = ReactNative.requireNativeComponent 'RNSearchBar', null
 
 PropTypes = React.PropTypes
 
-NativeModules = React.NativeModules
+NativeModules = ReactNative.NativeModules
 
 
 SearchBar = React.createClass
@@ -14,6 +15,7 @@ SearchBar = React.createClass
     text: PropTypes.string
     barTintColor: PropTypes.string
     tintColor: PropTypes.string
+    textColor: PropTypes.string
     textFieldBackgroundColor: PropTypes.string
     showsCancelButton: PropTypes.bool
     onChange: PropTypes.func
@@ -22,7 +24,16 @@ SearchBar = React.createClass
     onBlur: PropTypes.func
     onSearchButtonPress: PropTypes.func
     onCancelButtonPress: PropTypes.func
+    enablesReturnKeyAutomatically: PropTypes.bool
     hideBackground: PropTypes.bool
+    barStyle: PropTypes.oneOf ['default', 'black']
+    searchBarStyle: PropTypes.oneOf ['default', 'prominent', 'minimal']
+    editable: PropTypes.bool
+
+  getDefaultProps: ->
+    barStyle: 'default'
+    searchBarStyle: 'default'
+    editable: true
 
   _onChange: (e) ->
     @props.onChange? e
@@ -37,10 +48,13 @@ SearchBar = React.createClass
       @props.onCancelButtonPress?()
 
   blur: ->
-    NativeModules.RNSearchBarManager.blur React.findNodeHandle(this)
+    NativeModules.RNSearchBarManager.blur ReactNative.findNodeHandle(this)
 
   focus: ->
-    NativeModules.RNSearchBarManager.focus React.findNodeHandle(this)
+    NativeModules.RNSearchBarManager.focus ReactNative.findNodeHandle(this)
+
+  unFocus: ->
+    NativeModules.RNSearchBarManager.unFocus(ReactNative.findNodeHandle(this))
 
   render: ->
     `<RNSearchBar
